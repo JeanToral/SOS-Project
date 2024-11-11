@@ -21,7 +21,7 @@ const Cadastros: React.FC<cadastrosProps> = ({ onAddCargo, cadastroData, setCada
     return (
         <div>
             <div className="cadastrosContainer">
-                {['nome', 'cnpj', 'empresa'].map(field => (
+                {['nome', 'cnpj', 'Nome da empresa'].map(field => (
                     <input
                         key={field}
                         type="text"
@@ -31,6 +31,7 @@ const Cadastros: React.FC<cadastrosProps> = ({ onAddCargo, cadastroData, setCada
                         onChange={handleChange}
                     />
                 ))}
+
             </div>
             <div className="addButtonContainer">
                 <button className="addButton" onClick={onAddCargo}>Adicionar cargo</button>

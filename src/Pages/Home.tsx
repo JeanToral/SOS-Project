@@ -16,7 +16,10 @@ interface cadastroData {
     empresa: string;
 }
 
+
+
 const Home = () => {
+
     const [cargosList, setCargosList] = useState<Cargo[]>([]);
     const [cadastroData, setCadastroData] = useState<cadastroData>({
         nome: '',
