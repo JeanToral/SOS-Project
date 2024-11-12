@@ -9,3 +9,18 @@ body {
     background-color: #007bff;
     color: #333;
 }
+
+.pdfButton {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #d87000;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #bd6200;
+    }
+}

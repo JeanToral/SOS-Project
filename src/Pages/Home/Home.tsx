@@ -134,7 +134,7 @@ const Home: React.FC = () => {
                     riscosData={riscosData} // Pass riscosData as a single prop
                 />
             ))}
-            {cargosList.length > 0 && <button onClick={exportToPdf}>Exportar para PDF</button>}
+            {cargosList.length > 0 && <button className='pdfButton' onClick={exportToPdf}>Gerar PDF</button>}
         </div>
     );
 };
