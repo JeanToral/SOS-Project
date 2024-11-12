@@ -13,7 +13,7 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);  //false
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);  //false
 
   const login = async (username: string, password: string): Promise<boolean> => {
     try {
