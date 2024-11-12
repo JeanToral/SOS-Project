@@ -1,115 +1,112 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Campos.scss";
 
 interface Cargo {
     id: number;
-    jobTitle?: string;
-    selections: Record<'left' | 'right', Record<number, boolean>>;
+    jobTitle: string;
+    selections: Record<'fisicos' | 'biologicos' | 'quimicos' | 'mecanicos', Record<number, boolean>>;
 }
 
-/* interface riscos {
-    titulo: String[];
-    subTituloFis: ['Ruídos', 'Vibrações', 'Calor', 'Umidade', 'Frio', 'Pressão', 'Radiação'];
-    subTituloQui: ['Agentes asfixiantes', 'Agentes anestésicos', 'Agentes tóxicos', 'Agentes cancerígenos'];
-    subTituloBio: ['Bactérias', 'Virus', 'Fungos', 'Protozoários'];
-    subTituloMec: ['Mecânico', 'Mecânico', 'Mecânico', 'Mecânico', 'Mecânico', 'Mecânico', 'Mecânico'];
-} */
-
-interface riscosFisicos {
+interface Riscos {
     titulo: string[];
     subTitulo: string[];
 }
 
-interface riscosQuimicos {
-    titulo: string[];
-    subTitulo: string[];
-}
-
-interface riscosBiologicos {
-    titulo: string[];
-    subTitulo: string[];
-}
-
-interface riscosMecanicos {
-    titulo: string[];
-    subTitulo: string[];
-}
-
-function getRiscosFisicos(): riscosFisicos {
+export function getRiscosFisicos(): Riscos {
     return {
         titulo: ['Riscos físicos'],
         subTitulo: ['Ruídos', 'Vibrações', 'Calor', 'Umidade', 'Frio', 'Pressão', 'Radiação']
     };
 }
 
-function getRiscosBiologicos(): riscosBiologicos {
+export function getRiscosBiologicos(): Riscos {
     return {
         titulo: ['Riscos Biologicos'],
         subTitulo: ['Bactérias', 'Virus', 'Fungos', 'Protozoários']
     };
 }
 
-function getRiscosQuimicos(): riscosQuimicos {
+export function getRiscosQuimicos(): Riscos {
     return {
         titulo: ['Riscos Químicos'],
         subTitulo: ['Agentes asfixiantes', 'Agentes anestésicos', 'Agentes tóxicos', 'Agentes cancerígenos']
     };
 }
 
-function getRiscosMecanicos(): riscosMecanicos {
+export function getRiscosMecanicos(): Riscos {
     return {
         titulo: ['Riscos Mecânicos'],
-        subTitulo: ['Mecânico', 'Mecânico', 'Mecânico', 'Mecânico', 'Mecânico', 'Mecânico', 'Mecânico', 'Mecânico']
+        subTitulo: ['Mecânico', 'Mecânic', 'Mecâni', 'Mecân', 'Mecâ', 'Mec', 'Me', 'M']
     };
 }
 
-
+export const riscosData = {
+    fisicos: getRiscosFisicos(),
+    biologicos: getRiscosBiologicos(),
+    quimicos: getRiscosQuimicos(),
+    mecanicos: getRiscosMecanicos()
+};
 
 interface CargoProps {
     cargo: Cargo;
-    onUpdate: (data: Partial<Cargo>) => void;
+    onUpdate: (id: number, category: string, index: number, value: boolean | string) => void;
+    riscosData: Record<string, Riscos>;
 }
 
-const Campos: React.FC<CargoProps> = ({ cargo, onUpdate }) => {
-    const handleChange = (field: string, value: any) => {
-        onUpdate({ [field]: value });
-    }
+const Campos: React.FC<CargoProps> = ({ cargo, onUpdate, riscosData }) => {
+    const [jobTitle, setJobTitle] = useState(cargo.jobTitle);
+
+    const handleChange = (category: 'fisicos' | 'biologicos' | 'quimicos' | 'mecanicos', index: number, value: boolean) => {
+        onUpdate(cargo.id, category, index, value);
+    };
+
+    const handleJobTitleChange = (value: string) => {
+        setJobTitle(value);
+        onUpdate(cargo.id, 'jobTitle', 0, value); // Update job title
+    };
 
     return (
-        <div className="formContainer">
-            <label htmlFor={`jobTitle-${cargo.id}`}>Nome do cargo</label>
-            <input
-                type="text"
-                id={`jobTitle-${cargo.id}`}
-                value={cargo.jobTitle || ''}
-                onChange={e => handleChange('jobTitle', e.target.value)}
-            />
+        <>
+            <div className="formContainer">
+                <div className="input-section">
+                    <label htmlFor={`jobTitle-${cargo.id}`}>Nome do cargo</label>
+                    <input
+                        type="text"
+                        id={`jobTitle-${cargo.id}`}
+                        value={jobTitle || ''}
+                        onChange={(e) => handleJobTitleChange(e.target.value)}
+                    />
+                </div>
+            </div>
 
-            <label className="tituloRisco">{getRiscosFisicos().titulo[0]}</label>
+            <div className="formResponses">
+                {Object.entries(riscosData).map(([category, data]) => (
+                    <React.Fragment key={category}>
+                        {/* Display the title of the category */}
+                        {data && data.titulo && data.titulo.length > 0 && (
+                            <label className="tituloRisco">{data.titulo[0]}</label>
+                        )}
 
-            <div className="radioGrid" id="grid-left">
-                {['left'].map(side => (
-                    <div key={side} className="radioColumn" id="column-left">
-                        {[1, 2, 3, 4, 5, 6, 7].map(num => (
-                            <div key={num} className="radioGroup" id="group-left">
-                                <input
-                                    type="radio"
-                                    id={`campo-${side}-${cargo.id}-${num}`}
-                                    name={`group-${side}-${cargo.id}-${num}`}
-                                    checked={cargo.selections?.[side]?.[num] || false}
-                                    onChange={e => handleChange('selections', {
-                                        ...cargo.selections,
-                                        [side]: { ...cargo.selections?.[side], [num]: e.target.checked }
-                                    })}
-                                />
-                                <label htmlFor={`campo-${side}-${cargo.id}-${num}`}>{getRiscosFisicos().subTitulo[num - 1]}</label>
-                            </div>
-                        ))}
-                    </div>
+                        <div className="subTituloRisco">
+                            {/* Render each subtitle */}
+                            {data?.subTitulo?.length > 0 && data.subTitulo.map((subTitulo, index) => (
+                                <div key={`${index}-${subTitulo}`}>
+                                    <input
+                                        className="mr-1"
+                                        type="checkbox"
+                                        id={`${category}-${subTitulo}-${cargo.id}`}
+                                        checked={cargo.selections[category]?.[index] || false}
+                                        onChange={(e) => handleChange(category as 'fisicos' | 'biologicos' | 'quimicos' | 'mecanicos', index, e.target.checked)}
+                                    />
+                                    <label htmlFor={`${category}-${subTitulo}-${cargo.id}`}>{subTitulo}</label>
+                                </div>
+                            ))}
+                        </div>
+                    </React.Fragment>
                 ))}
             </div>
-        </div>)
-}
-
+        </>
+    );
+};
 
 export default Campos;
