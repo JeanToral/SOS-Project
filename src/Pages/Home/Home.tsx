@@ -1,59 +1,113 @@
-import React, { useState } from 'react';
-import './Home.scss';
-import Cadastros from '../../Components/Cadastros/Cadastros.tsx';
-import Campos from '../../Components/Campos/Campos.tsx';
 import { jsPDF } from 'jspdf';
+import React, { useState } from 'react';
+import Cadastros from '../../Components/Cadastros/Cadastros.tsx';
+import Campos, { getRiscosBiologicos, getRiscosFisicos, getRiscosMecanicos, getRiscosQuimicos } from '../../Components/Campos/Campos.tsx';
+import './Home.scss';
 
 interface Cargo {
     id: number;
-    jobTitle?: string;
-    selections: Record<'left' | 'right', Record<number, boolean>>;
+    jobTitle: string;
+    selections: {
+        fisicos: object;
+    };
 }
 
-interface cadastroData {
+interface CadastroData {
     nome: string;
     cnpj: string;
     empresa: string;
 }
 
-const Home = () => {
+const Home: React.FC = () => {
     const [cargosList, setCargosList] = useState<Cargo[]>([]);
-    const [cadastroData, setCadastroData] = useState<cadastroData>({
+    const [cadastroData, setCadastroData] = useState<CadastroData>({
         nome: '',
         cnpj: '',
         empresa: ''
     });
 
-    const addCargo = () => {
-        setCargosList(prev => [...prev, { id: Date.now(), jobTitle: '', selections: { left: {}, right: {} } }]);
+    const riscosData = {
+        fisicos: getRiscosFisicos(),
+        biologicos: getRiscosBiologicos(),
+        quimicos: getRiscosQuimicos(),
+        mecanicos: getRiscosMecanicos()
     };
 
-    const updateCargo = (id: number, data: Partial<Cargo>) => {
-        setCargosList(prev => prev.map(cargo => cargo.id === id ? { ...cargo, ...data } : cargo));
+    const addCargo = () => {
+        setCargosList((prev) => [
+            ...prev,
+            {
+                id: Date.now(),
+                jobTitle: '',
+                selections: {
+                    fisicos: {},
+                    biologicos: {},
+                    quimicos: {},
+                    mecanicos: {},
+                },
+            },
+        ]);
+    };
+
+    const updateCargo = (
+        id: number,
+        category: 'fisicos' | 'biologicos' | 'quimicos' | 'mecanicos' | 'jobTitle',
+        index: number,
+        value: boolean | string
+    ) => {
+        setCargosList((prev) =>
+            prev.map((cargo) =>
+                cargo.id === id
+                    ? {
+                        ...cargo,
+                        jobTitle: category === 'jobTitle' ? value : cargo.jobTitle,
+                        selections: category !== 'jobTitle'
+                            ? {
+                                ...cargo.selections,
+                                [category]: {
+                                    ...cargo.selections[category],
+                                    [index]: typeof value === 'boolean' ? value : cargo.selections[category][index],
+                                },
+                            }
+                            : cargo.selections,
+                    }
+                    : cargo
+            )
+        );
     };
 
     const exportToPdf = () => {
         const doc = new jsPDF();
         let yPos = 20;
 
-        doc.setFontSize(20).text('Dados da empresa', 20, yPos);
-        yPos += 10;
-        Object.entries(cadastroData).forEach(([key, value]) => {
-            doc.setFontSize(15).text(`${key[0].toUpperCase() + key.slice(1)}: ${value}`, 20, yPos);
+        // Display Cadastro Data
+        Object.entries(cadastroData).forEach(([field, value]) => {
+            doc.setFontSize(15).text(`${field.toUpperCase()}: ${value}`, 20, yPos);
             yPos += 10;
         });
 
+        // Display Cargos List and Risks
         cargosList.forEach((cargo, index) => {
-            yPos += 10;
-            doc.setFontSize(15).text(`Cargo ${index + 1}`, 20, yPos);
-            yPos += 10;
-            doc.setFontSize(10).text(`Nome do cargo: ${cargo.jobTitle || 'Não informado'}`, 20, yPos);
+            doc.setFontSize(15).text(`Nome do cargo: ${cargo.jobTitle || 'Não informado'}`, 20, yPos);
             yPos += 10;
 
-            ['left', 'right'].forEach(side => {
-                Object.entries(cargo.selections[side]).forEach(([key, value]) => {
-                    if (value) doc.text(`- Campo ${key}`, 30, yPos += 7);
-                });
+            Object.entries(riscosData).forEach(([key, { titulo, subTitulo }]) => {
+                if (titulo.length > 0) {
+                    const anySelected = cargo.selections[key as keyof Cargo['selections']] &&
+                        subTitulo.some((_, index) => cargo.selections[key as keyof Cargo['selections']][index]);
+
+                    if (anySelected) {
+                        doc.setFontSize(12).text(titulo[0], 20, yPos);
+
+                        subTitulo.forEach((subTitle, index) => {
+                            if (cargo.selections[key as keyof Cargo['selections']][index]) {
+                                doc.text(`- ${subTitle}`, 40, (yPos += 7));
+                            }
+                        });
+
+                        yPos += 10;
+                    }
+                }
             });
 
             if (yPos > 270) {
@@ -62,25 +116,27 @@ const Home = () => {
             }
         });
 
-        doc.save('sos-dados.pdf');
+        doc.save('riscos.pdf');
     };
 
     return (
         <div className="homeContainer">
-            <Cadastros onAddCargo={addCargo} cadastroData={cadastroData} setCadastroData={setCadastroData} />
-            {cargosList.map(cargo => (
-                <Campos key={cargo.id} cargo={cargo} onUpdate={data => updateCargo(cargo.id, data)} />
+            <Cadastros
+                onAddCargo={addCargo}
+                cadastroData={cadastroData}   // Certifique-se de que esta linha está correta
+                setCadastroData={setCadastroData}
+            />
+            {cargosList.map((cargo) => (
+                <Campos
+                    key={cargo.id}
+                    cargo={cargo}
+                    onUpdate={updateCargo}
+                    riscosData={riscosData} // Pass riscosData as a single prop
+                />
             ))}
-            {cargosList.length > 0 && (
-                <button
-                    onClick={exportToPdf}
-                    className="exportButton"
-                >
-                    Exportar para PDF
-                </button>
-            )}
+            {cargosList.length > 0 && <button className='pdfButton' onClick={exportToPdf}>Gerar PDF</button>}
         </div>
     );
-}
+};
 
 export default Home;

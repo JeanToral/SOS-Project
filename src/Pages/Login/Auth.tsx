@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -13,7 +14,8 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);  //false
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const login = async (username: string, password: string): Promise<boolean> => {
     try {
@@ -30,15 +32,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setIsAuthenticated(true);
         return true;
       }
-      return false; //false
+      return false;
     } catch (error) {
       console.error('Erro na autenticação:', error);
-      return false; //false
+      return false;
     }
   };
 
   const logout = () => {
-    setIsAuthenticated(false); //false
+    setIsAuthenticated(false);
+    navigate('/login'); // Redireciona para a tela de login
   };
 
   return (
@@ -50,6 +53,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error("");
+  if (!context) throw new Error("useAuth deve ser usado dentro de um AuthProvider");
   return context;
 };

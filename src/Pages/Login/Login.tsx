@@ -1,5 +1,4 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./Auth.tsx";
 import Footer from "./Footer.tsx";
@@ -8,12 +7,17 @@ const Login: React.FC = () => {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setError('');
     const success = await login(id, password);
+    setLoading(false);
+
     if (success) {
       navigate('/clientes');
     } else {
@@ -29,22 +33,31 @@ const Login: React.FC = () => {
             <input
               type="text"
               placeholder="Usuário"
+              aria-label="Usuário"
               className="p-2 w-full rounded-md bg-white text-black"
               value={id}
-              onChange={(e) => setId(e.target.value)}
+              onChange={(e) => {
+                setId(e.target.value);
+                if (error) setError('');
+              }}
             />
             <input
               type="password"
               placeholder="Senha"
+              aria-label="Senha"
               className="p-2 w-full rounded-md bg-white text-black"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (error) setError('');
+              }}
             />
             <button
               type="submit"
-              className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
+              className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 disabled:opacity-50"
+              disabled={loading}
             >
-              Login
+              {loading ? 'Carregando...' : 'Login'}
             </button>
             {error && <div className="text-red-500 mt-2 text-center">{error}</div>}
           </form>
