@@ -15,7 +15,7 @@ interface Riscos {
 export function getRiscosFisicos(): Riscos {
     return {
         titulo: ['Riscos físicos'],
-        subTitulo: ['Ruídos', 'Vibrações', 'Calor', 'Umidade', 'Frio', 'Pressão', 'Radiação']
+        subTitulo: ['Ruídos', 'Vibrações', 'Temperatura', 'Umidade', 'Frio', 'Pressão', 'Radiação']
     };
 }
 
@@ -36,7 +36,14 @@ export function getRiscosQuimicos(): Riscos {
 export function getRiscosMecanicos(): Riscos {
     return {
         titulo: ['Riscos Mecânicos'],
-        subTitulo: ['Mecânico', 'Mecânic', 'Mecâni', 'Mecân', 'Mecâ', 'Mec', 'Me', 'M']
+        subTitulo: ['Arranjos físicos', 'Risco de quedas', 'Falta de EPIs', 'Ferramentas inapropriadas', 'Instalações elétricas precárias']
+    };
+}
+
+export function getRiscosErgonomicos(): Riscos {
+    return {
+        titulo: ['Riscos Ergonômicos'],
+        subTitulo: ['Postura', 'Iluminação', 'Ritmo excessívo', 'Jornada prolongada', 'Monotonia de atividade', 'Levantamento de cargas', 'Movimentos repetitivos']
     };
 }
 
