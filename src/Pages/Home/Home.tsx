@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import Cadastros from '../../Components/Cadastros/Cadastros.tsx';
 import Campos, { getRiscosBiologicos, getRiscosFisicos, getRiscosMecanicos, getRiscosQuimicos } from '../../Components/Campos/Campos.tsx';
 import './Home.scss';
+import { Navigate, redirect, Route, useNavigate } from 'react-router-dom';
 
 interface Cargo {
     id: number;
@@ -80,13 +81,11 @@ const Home: React.FC = () => {
         const doc = new jsPDF();
         let yPos = 20;
 
-        // Display Cadastro Data
         Object.entries(cadastroData).forEach(([field, value]) => {
             doc.setFontSize(15).text(`${field.toUpperCase()}: ${value}`, 20, yPos);
             yPos += 10;
         });
 
-        // Display Cargos List and Risks
         cargosList.forEach((cargo, index) => {
             doc.setFontSize(15).text(`Nome do cargo: ${cargo.jobTitle || 'Não informado'}`, 20, yPos);
             yPos += 10;
@@ -119,11 +118,13 @@ const Home: React.FC = () => {
         doc.save('riscos.pdf');
     };
 
+    const navigate = useNavigate();
+
     return (
         <div className="homeContainer">
             <Cadastros
                 onAddCargo={addCargo}
-                cadastroData={cadastroData}   // Certifique-se de que esta linha está correta
+                cadastroData={cadastroData}
                 setCadastroData={setCadastroData}
             />
             {cargosList.map((cargo) => (
@@ -131,10 +132,11 @@ const Home: React.FC = () => {
                     key={cargo.id}
                     cargo={cargo}
                     onUpdate={updateCargo}
-                    riscosData={riscosData} // Pass riscosData as a single prop
+                    riscosData={riscosData}
                 />
             ))}
             {cargosList.length > 0 && <button className='pdfButton' onClick={exportToPdf}>Gerar PDF</button>}
+            <button className='buscaCNPJ' onClick={() => navigate('/buscar')}>Buscar CNPJ</button>
         </div>
     );
 };

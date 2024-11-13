@@ -1,0 +1,71 @@
+.buscar-cnpj-container {
+    padding: 20px;
+    border: 1px solid #d87000;
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #ff8400;
+}
+
+.botaoBusca {
+    background-color: #0056b3;
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #003e80;
+    }
+}
+
+.search-box {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.search-box input {
+    flex: 1;
+    padding: 8px;
+}
+
+.search-box button {
+    padding: 8px 12px;
+}
+
+.report-list {
+    padding-top: 10px;
+}
+
+.report-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border: black solid 1px;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+.download-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.voltaHome {
+    display: inline-block;
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background-color: #ff8400;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #bd6200;
+    }
+}

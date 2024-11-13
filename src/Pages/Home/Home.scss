@@ -14,7 +14,23 @@ body {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background-color: #d87000;
+    background-color: #ff8400;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #bd6200;
+    }
+}
+
+.buscaCNPJ {
+    display: inline-block;
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background-color: #ff8400;
     color: #fff;
     padding: 10px 20px;
     border-radius: 5px;

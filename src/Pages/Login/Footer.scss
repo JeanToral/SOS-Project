@@ -1,0 +1,12 @@
+footer {
+    background-color: #ff8400; // Cor de fundo cinza escuro
+    color: white;
+    padding: 1rem; // 4px de padding
+    display: flex;
+    justify-content: center; // Centraliza horizontalmente
+    align-items: center; // Centraliza verticalmente
+    
+    .container {
+        text-align: center;
+    }
+}

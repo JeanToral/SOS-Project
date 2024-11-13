@@ -1,9 +1,11 @@
 import React from "react";
+import "./Footer.scss";
+
 const Footer = () => {
     return (
-        <footer className="bg-gray-800 text-white p-4 w-full">
-            <div className="container mx-auto text-center">
-                <p>&copy; {new Date().getFullYear()} SunBridge. Todos os direitos reservados.</p>
+        <footer className="footer">
+            <div className="footerContainer">
+                <p>&copy; {new Date().getFullYear()} SOS Saúde. Todos os direitos reservados.</p>
             </div>
         </footer>
     );
