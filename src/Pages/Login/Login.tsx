@@ -19,7 +19,7 @@ const Login: React.FC = () => {
     setLoading(false);
 
     if (success) {
-      navigate('/clientes');
+      navigate('/home');
     } else {
       setError('Usuário ou senha incorreta!');
     }
